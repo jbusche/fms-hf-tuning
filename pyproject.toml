@@ -10,6 +10,7 @@ description = "FMS HF Tuning"
 authors = [
   {name = "Sukriti Sharma", email = "sukriti.sharma4@ibm.com"},
   {name = "Anh Uong", email = "anh.uong@ibm.com"},
+  {name = "Alex Brooks", email = "Alex.Brooks@ibm.com"},
 ]
 license = {text = "Apache-2.0"}
 readme = "README.md"
