@@ -76,7 +76,6 @@ The following tools are required:
 
 Installation:
 ``` 
-pip install -r requirements.txt
 pip install -U datasets
 pip install -e .
 ```

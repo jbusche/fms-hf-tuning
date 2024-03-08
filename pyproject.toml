@@ -21,11 +21,14 @@ classifiers=[
     "License :: OSI Approved :: Apache Software License"
 ]
 
-dynamic = ["dependencies", "optional-dependencies"]
+dynamic = ["dependencies"]
+
+[project.optional-dependencies]
+dev = ["wheel", "packaging", "ninja"]
+flash-attn = ["flash-attn"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
-optional-dependencies = {flashattention = {file = ["flashattn_requirements.txt"]}}
 
 [project.urls]
 Homepage = "https://github.com/foundation-model-stack/fms-hf-tuning"
