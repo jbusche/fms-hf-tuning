@@ -77,7 +77,7 @@ The following tools are required:
 Installation:
 ``` 
 pip install -U datasets
-pip install -e .
+pip install -e "."
 ```
 
 ### Unit tests
