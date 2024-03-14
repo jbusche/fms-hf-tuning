@@ -65,7 +65,7 @@ export CUDA_VISIBLE_DEVICES=0
 
 python tuning/sft_trainer.py  \
 --model_name_or_path $MODEL_PATH  \
---data_path $DATA_PATH  \
+--training_data_path $DATA_PATH  \
 --output_dir $OUTPUT_PATH  \
 --num_train_epochs 5  \
 --per_device_train_batch_size 4  \
@@ -93,7 +93,7 @@ torchrun \
 --master_port=1234 \
 tuning/sft_trainer.py \
 --model_name_or_path $MODEL_PATH \
---data_path $DATA_PATH \
+--training_data_path $DATA_PATH \
 --bf16 True \
 --output_dir $OUTPUT_PATH \
 --num_train_epochs 5 \
@@ -123,7 +123,7 @@ For `GPTBigCode` models, Hugging Face has enabled Flash v2 and one can simply re
 ```bash
 python tuning/sft_trainer.py \
 --model_name_or_path $MODEL_PATH \
---data_path $DATA_PATH \
+--training_data_path $DATA_PATH \
 --output_dir $OUTPUT_PATH \
 --num_train_epochs 40 \
 --per_device_train_batch_size 4 \
