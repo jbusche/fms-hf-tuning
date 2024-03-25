@@ -80,7 +80,7 @@ Installation:
 ``` 
 pip install -r requirements.txt
 pip install -U datasets
-pip install -e .
+pip install -e "."
 ```
 <details>
 <summary>Linting</summary>
