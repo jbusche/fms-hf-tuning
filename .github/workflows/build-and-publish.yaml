@@ -51,9 +51,3 @@ jobs:
           tox -e build,twinecheck
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-# Work in progress... need to get a PYPI_TOKEN in the repo
-#      - name: Publish wheel package on PyPI
-#        if: github.event_name == 'release'
-#        uses: pypa/gh-action-pypi-publish@release/v1
-#        with:
-#          password: ${{ secrets.PYPI_TOKEN }}
