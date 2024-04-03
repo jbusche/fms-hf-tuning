@@ -37,8 +37,8 @@ jobs:
           python -m pip install -r setup_requirements.txt
       - name: Replace release-version with provided input value
         run: |
-        export RELEASE_VERSION=${{ github.event.inputs.release-version }}
-        sed -i "s/^version = \"[0-9.]*\"$/version = \"${RELEASE_VERSION}\"/g" pyproject.toml
+          export RELEASE_VERSION=${{ github.event.inputs.release-version }}
+          sed -i "s/^version = \"[0-9.]*\"$/version = \"${RELEASE_VERSION}\"/g" pyproject.toml
       - name: Build and test with tox
         run: tox -e py39
       - name: Build and check wheel package
