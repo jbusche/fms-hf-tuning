@@ -6,7 +6,7 @@ requires = [
 
 [project]
 name = "fms-hf-tuning"
-dynamic = ["version"]
+dynamic = ["version", "dependencies"]
 description = "FMS HF Tuning"
 authors = [
   {name = "Sukriti Sharma", email = "sukriti.sharma4@ibm.com"},
@@ -24,8 +24,6 @@ classifiers=[
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-
-dynamic = ["dependencies"]
 
 [project.optional-dependencies]
 dev = ["wheel", "packaging", "ninja"]
