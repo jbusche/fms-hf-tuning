@@ -17,6 +17,7 @@ name: Build and Publish FMS-hf-tuning Library
 on:
     release:
       types: [published]
+    workflow_dispatch:
 
 jobs:
   build:
@@ -24,10 +25,10 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - setup: "3.9"
-            tox: "py39"
-          - setup: "3.10"
-            tox: "py310"
+   #       - setup: "3.9"
+   #         tox: "py39"
+   #       - setup: "3.10"
+   #         tox: "py310"
           - setup: "3.11"
             tox: "py311"
 
@@ -52,5 +53,5 @@ jobs:
       - name: Build and check wheel package
         run:
           tox -e build,twinecheck
-      - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+   #   - name: Publish package distributions to PyPI
+   #     uses: pypa/gh-action-pypi-publish@release/v1
