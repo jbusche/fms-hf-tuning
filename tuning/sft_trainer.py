@@ -39,6 +39,7 @@ import transformers
 # Local
 from tuning.config import configs, peft_config
 from tuning.data import tokenizer_data_utils
+from tuning.trainercontroller import TrainerControllerCallback
 from tuning.utils.config_utils import get_hf_peft_config
 from tuning.utils.data_type_utils import get_torch_dtype
 from tuning.utils.import_utils import is_aim_available
@@ -56,27 +57,25 @@ class FileLoggingCallback(TrainerCallback):
 
     def on_log(self, args, state, control, logs=None, **kwargs):
         """Checks if this log contains keys of interest, e.g., loss, and if so, creates
-        train_loss.jsonl in the model output dir (if it doesn't already exist),
+        training_logs.jsonl in the model output dir (if it doesn't already exist),
         appends the subdict of the log & dumps the file.
         """
         # All processes get the logs from this node; only update from process 0.
         if not state.is_world_process_zero:
             return
 
-        # separate evaluation loss with train loss
-        log_file_path = os.path.join(args.output_dir, "train_loss.jsonl")
-        eval_log_file_path = os.path.join(args.output_dir, "eval_loss.jsonl")
+        log_file_path = os.path.join(args.output_dir, "training_logs.jsonl")
         if logs is not None and "loss" in logs and "epoch" in logs:
-            self._track_loss("loss", log_file_path, logs, state)
+            self._track_loss("loss", "training_loss", log_file_path, logs, state)
         elif logs is not None and "eval_loss" in logs and "epoch" in logs:
-            self._track_loss("eval_loss", eval_log_file_path, logs, state)
+            self._track_loss("eval_loss", "validation_loss", log_file_path, logs, state)
 
-    def _track_loss(self, loss_key, log_file, logs, state):
+    def _track_loss(self, loss_key, log_name, log_file, logs, state):
         try:
             # Take the subdict of the last log line; if any log_keys aren't part of this log
             # object, assume this line is something else, e.g., train completion, and skip.
             log_obj = {
-                "name": loss_key,
+                "name": log_name,
                 "data": {
                     "epoch": round(logs["epoch"], 2),
                     "step": state.global_step,
@@ -99,6 +98,7 @@ def train(
     peft_config: Optional[  # pylint: disable=redefined-outer-name
         Union[peft_config.LoraConfig, peft_config.PromptTuningConfig]
     ] = None,
+    trainer_controller_args: configs.TrainerControllerArguments = None,
 ):
     """Call the SFTTrainer
 
@@ -110,6 +110,8 @@ def train(
         peft_config.PromptTuningConfig for prompt tuning | \
         None for fine tuning
             The peft configuration to pass to trainer
+        trainer_control_args: configs.TrainerControllerArguments \
+            for controlling the training loop using policy rules
     """
 
     logger = logging.get_logger("sft_trainer")
@@ -223,6 +225,14 @@ def train(
     if is_aim_available():
         callbacks.append(get_aimstack_callback())
 
+    if (trainer_controller_args is not None) and (
+        trainer_controller_args.trainer_controller_config_file is not None
+    ):
+        tc_callback = TrainerControllerCallback(
+            trainer_controller_args.trainer_controller_config_file
+        )
+        callbacks.append(tc_callback)
+
     if train_args.packing:
         logger.info("Packing is set to True")
         data_collator = None
@@ -275,6 +285,7 @@ def main(**kwargs):  # pylint: disable=unused-argument
             configs.ModelArguments,
             configs.DataArguments,
             configs.TrainingArguments,
+            configs.TrainerControllerArguments,
             peft_config.LoraConfig,
             peft_config.PromptTuningConfig,
         )
@@ -289,6 +300,7 @@ def main(**kwargs):  # pylint: disable=unused-argument
         model_args,
         data_args,
         training_args,
+        trainer_controller_args,
         lora_config,
         prompt_tuning_config,
         peft_method,
@@ -300,7 +312,7 @@ def main(**kwargs):  # pylint: disable=unused-argument
         tune_config = prompt_tuning_config
     else:
         tune_config = None
-    train(model_args, data_args, training_args, tune_config)
+    train(model_args, data_args, training_args, tune_config, trainer_controller_args)
 
 
 if __name__ == "__main__":
