@@ -24,11 +24,6 @@ jobs:
     strategy:
       matrix:
         python-version:
-# Commenting out older python versions for now
-#          - setup: "3.9"
-#            tox: "py39"
-#          - setup: "3.10"
-#            tox: "py310"
           - setup: "3.11"
             tox: "py311"
 
@@ -53,6 +48,5 @@ jobs:
       - name: Build and check wheel package
         run:
           tox -e build,twinecheck
-# Commenting out push to PyPI for now
-#      - name: Publish package distributions to PyPI
-#        uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
